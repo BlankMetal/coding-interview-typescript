@@ -26,8 +26,8 @@ interface RunResponse {
   error?: string;
 }
 
-// Health check endpoint (hardcoded)
-const HEALTH_CHECK_URL = "https://simple-connectivity-check.vercel.app/";
+// Health check endpoint (proxied server-side to avoid CORS)
+const HEALTH_CHECK_URL = "/api/health";
 
 export default function Home() {
   const [loading, setLoading] = useState(false);
@@ -62,9 +62,9 @@ export default function Home() {
     const performHealthCheck = async () => {
       try {
         const response = await fetch(HEALTH_CHECK_URL);
-        const text = await response.text();
-        
-        if (response.ok && text.includes("Healthy")) {
+        const data = await response.json();
+
+        if (data.healthy) {
           setHealthCheckStatus("success");
         } else {
           setHealthCheckStatus("error");
